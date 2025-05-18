@@ -138,7 +138,7 @@ const PrivacyPolicy = () => {
         </div>
       </div>
 
-      <footer className="footer">
+      {/* <footer className="footer">
         <div className="footer-container">
           <div className="footer-section">
             <h3>Products</h3>
@@ -248,7 +248,7 @@ const PrivacyPolicy = () => {
         <div className="footer-bottom">
           <p>@panwarwpurva394@gmail.com</p>
         </div>
-      </footer>
+      </footer> */}
     </>
   );
 };

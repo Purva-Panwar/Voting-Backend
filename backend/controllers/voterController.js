@@ -4,11 +4,10 @@ const VoterModel = require("../models/voterModal");
 const HttpError = require("../models/ErrorModal");
 const transporter = require("../config/nodemailer");
 const mongoose = require('mongoose');
-// const voterModal = require("../models/voterModal");
-// const voterModal = require("../models/voterModal");
-// import { EMAIL_VERIFY_TEMPLATE, PASSWORD_RESET_TEMPLATE } from "../config/emailTemplate";
 
-
+const { v4: uuid } = require("uuid")
+const cloudinary = require("../utils/cloudinary")
+const path = require("path")
 
 
 
@@ -18,9 +17,12 @@ const generateToken = (payload) => {
     return token;
 }
 
+
+
 const registerVoter = async (req, res, next) => {
     try {
         const { fullName, email, password, password2, age, idnumber, gender } = req.body;
+
 
         // Validate input fields
         if (!fullName || !email || !password || !password2 || !age || !idnumber || !gender) {
@@ -47,15 +49,15 @@ const registerVoter = async (req, res, next) => {
         }
 
         // Ensure passwords match
-        if (password !== password2) {
-            return res.status(422).json({ message: "Passwords do not match." });
-        }
+
         if (age < 18) {
             return res.status(422).json({ message: "you are not able to vote" });
         }
+
         if (idnumber.trim().length !== 12) {
             return res.status(422).json({ message: "12 digit Id number" });
         }
+
         const validGenders = ["male", "female", "other"];
         if (!validGenders.includes(gender.toLowerCase())) {
             return res.status(422).json({ message: "Invalid gender selection." });
@@ -79,6 +81,7 @@ const registerVoter = async (req, res, next) => {
             age,
             idnumber: newidnumber,
             gender,
+
             isAdmin,
 
         });
@@ -87,12 +90,7 @@ const registerVoter = async (req, res, next) => {
         //emailV
         const token = generateToken({ id: newVoter._id, isAdmin })
 
-        // res.cookie('token', token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-        //     maxAge: 7 * 24 * 60 * 60 * 1000
-        // });
+
 
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
@@ -118,6 +116,50 @@ const registerVoter = async (req, res, next) => {
     }
 };
 
+
+
+
+//editProfile
+const updateVoterProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+
+
+        // Validate ID format
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid voter ID format." });
+        }
+
+        // Find voter by ID
+        let voter = await VoterModel.findById(id);
+        if (!voter) {
+            return res.status(404).json({ message: "Voter not found." });
+        }
+
+        // Update voter details
+        const { fullName, email, password, age, idnumber, gender } = req.body;
+
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            voter.password = await bcrypt.hash(password, salt);
+        }
+
+        voter.fullName = fullName || voter.fullName;
+        voter.email = email || voter.email;
+        voter.age = age || voter.age;
+        voter.idnumber = idnumber || voter.idnumber;
+        voter.gender = gender || voter.gender;
+
+        // Save updated voter
+        await voter.save();
+
+        res.json({ message: "Profile updated successfully!", voter });
+    } catch (error) {
+        console.error("Error updating voter:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
 
 
 
@@ -148,14 +190,7 @@ const loginVoter = async (req, res, next) => {
         const { id, isAdmin, votedElections } = voter;
         const token = generateToken({ id: voter._id, isAdmin })
 
-        //emailV
-
-        // res.cookie('token', token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-        //     maxAge: 7 * 24 * 60 * 60 * 1000
-        // });
+        
 
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
@@ -176,12 +211,7 @@ const loginVoter = async (req, res, next) => {
 
 const logoutVoter = async (req, res, next) => {
     try {
-        // res.clearCookie('token', token, {
-        //     httpOnly: true,
-        //     secure: process.env.NODE_ENV === 'production',
-        //     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-
-        // });
+       
         res.json({ success: "true", message: "logout " })
     } catch (error) {
         return next(new HttpError("Logout failed.Please check your credentials or try again later.", 422))
@@ -190,71 +220,7 @@ const logoutVoter = async (req, res, next) => {
 
 
 
-// emailv
-//verof otp
-// const VoterModel = require("../models/VoterModel");
-// const HttpError = require("../utils/HttpError");
-// const transporter = require("../utils/emailTransporter"); // Nodemailer setup
 
-// ✅ Send OTP
-// const sendVerifyOtp = async (req, res, next) => {
-//     try {
-//         const { email } = req.body;
-//         console.log(email);
-
-//         // const email = "panwarpurva394@gmail.com"
-//         // req.body;
-//         const user = await VoterModel.findOne({ email });
-
-//         if (!user) return next(new HttpError("User not found.", 404));
-//         if (user.isAccountVerified) return next(new HttpError("Account already verified.", 400));
-
-//         // Generate OTP (6-digit)
-//         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-//         // Store OTP in DB
-//         user.verifyOtp = otp;
-//         user.verifyOtpExpireAt = Date.now() + 10 * 60 * 1000; // OTP valid for 10 min
-//         await user.save();
-
-//         // Send OTP email
-//         const mailOptions = {
-//             from: process.env.SENDER_EMAIL,
-//             to: user.email,
-//             subject: "Account Verification OTP",
-//             text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
-//         };
-//         await transporter.sendMail(mailOptions);
-
-//         res.status(200).json({ success: true, message: `OTP sent to ${user.email}` });
-//     } catch (error) {
-//         next(new HttpError("Failed to send OTP. Try again later.", 500));
-//     }
-// };
-
-// // ✅ Verify OTP
-// const verifyEmail = async (req, res, next) => {
-//     try {
-//         const { email } = req.body;
-//         // const email = "panwarpurva394@gmail.com"
-//         const { otp } = req.body;
-//         const user = await VoterModel.findOne({ email });
-
-//         if (!user) return next(new HttpError("User not found.", 404));
-//         if (!user.verifyOtp || user.verifyOtp !== otp) return next(new HttpError("Invalid OTP.", 400));
-//         if (user.verifyOtpExpireAt < Date.now()) return next(new HttpError("Expired OTP.", 400));
-
-//         // Verify the account
-//         user.isAccountVerified = true;
-//         user.verifyOtp = null;
-//         user.verifyOtpExpireAt = null;
-//         await user.save();
-
-//         res.status(200).json({ success: true, message: "Email verified successfully!" });
-//     } catch (error) {
-//         next(new HttpError("Verification failed. Try again later.", 500));
-//     }
-// };
 
 const sendVerifyOtp = async (req, res, next) => {
     try {
@@ -303,101 +269,15 @@ const sendVerifyOtp = async (req, res, next) => {
 };
 
 
-// const sendVerifyOtp = async (req, res, next) => {
-//     try {
-//         const { email } = req.body;
 
-//         if (!email) {
-//             return next(new HttpError("Email is required.", 400));
-//         }
-
-//         console.log("Searching for voter with email:", email);
-//         const user = await VoterModel.findOne({ email }); // ✅ Corrected
-
-//         if (!user) {
-//             return next(new HttpError("User not found.", 404));
-//         }
-
-//         if (user.isAccountVerified) {
-//             return next(new HttpError("Account already verified.", 400));
-//         }
-
-//         // Generate a 6-digit OTP
-//         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-//         // Store OTP and expiration time
-//         user.verifyOtp = otp;
-//         user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-//         await user.save();
-
-//         // Send OTP email
-//         const mailOptions = {
-//             from: process.env.SENDER_EMAIL,
-//             to: user.email,
-//             subject: "Account Verification OTP",
-//             text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-//         };
-
-//         await transporter.sendMail(mailOptions);
-
-//         res.status(200).json({ success: true, message: `Verification code sent to ${user.email}` });
-
-//     } catch (err) {
-//         console.error("Error in sendVerifyOtp:", err);
-//         next(new HttpError("Failed to send OTP. Try again later.", 500));
-//     }
-// };
-
-
-// const sendVerifyOtp = async (req, res, next) => {
-//     try {
-
-//         // const id = "67cc2e3e3e3d03f94c6c52f0";
-//         const { email } = req.body;
-
-//         console.log("Searching for voterId:", email);
-//         const user = await VoterModel.findOne(email);
-//         if (!user) {
-//             return next(new HttpError("User not found.", 404));
-//         }
-
-//         if (user.isAccountVerified) {
-//             return next(new HttpError("Account already verified.", 400));
-//         }
-
-//         // Generate a 6-digit OTP
-//         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-//         // Store OTP and expiration time
-//         user.verifyOtp = otp;
-//         user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-//         await user.save();
-
-//         // Send OTP email
-//         const mailOptions = {
-//             from: process.env.SENDER_EMAIL,
-//             to: user.email, // Fixed: Use `user.email` instead of undefined `email`
-//             subject: "Account Verification OTP",
-//             text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-//         };
-
-//         await transporter.sendMail(mailOptions);
-
-//         res.status(200).json({ success: true, message: `Verification code sent to ${user.email}` });
-
-//     } catch (err) {
-//         next(new HttpError("Failed to send OTP. Try again later.", err, 500));
-//     }
-// };
 
 
 // //verify otp
 const verifyEmail = async (req, res, next) => {
     const { voterId } = req.body;
-    // const voterId = "67cdae7414d4be49209ff451"
+    
     const { otp } = req.body;
-    // const voterId = "67cc5603439c836295160ddd"
-    // const otp = "735032s"
+    
     if (!voterId) {
         return next(new HttpError("Missing details. votedId", 400));
     }
@@ -436,68 +316,9 @@ const verifyEmail = async (req, res, next) => {
 
 
 
-// const sendVerifyOtp = async (req, res) => {
-//     try {
-//         const { userId } = req.body;
-
-//         const user = await VoterModel.findById(userId)
-//         if (user.isAccountVerified) {
-//             return res.json({ success: false, message: "Account Already verified" })
-//         }
-//         const otp = String(Math.floor(100000 + Math.random() * 900000));
-
-//         user.verifyOtp = otp;
-//         user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-//         await user.save();
-
-//         const mailOptions = {
-//             from: process.env.SENDER_EMAIL,
-//             to: email,
-//             subject: 'Account Verification Otp',
-//             text: `Your OTP is ${otp} . Verify your account using this OTP.`
-//         }
-//         await transporter.sendMail(mailOptions);
-
-//         return res.json({ success: true, message: `verification code send on email ${email}` })
-//     } catch (err) {
-//         return res.json({ success: false, message: err.message })
-
-//     }
-
-// }
 
 
 
-// const verifyEmail = async (req, res) => {
-//     const { userId, otp } = req.body;
-//     if (!userId || !otp) {
-//         return res.json({ success: false, message: 'missing Details' })
-//     }
-//     try {
-//         const user = await VoterModel.findById(userId);
-
-//         if (!user) {
-//             return res.json({ success: false, message: 'User not found' })
-//         }
-//         if (user.verifyOtp === '' || user.verifyOtp !== otp) {
-//             return res.json({ success: false, message: 'Invalid OTP' })
-//         }
-//         if (user.verifyOtpExpireAt < Date.now()) {
-//             return res.json({ success: false, message: 'Expired OTP' })
-//         }
-
-//         user.isAccountVerified = true;
-//         user.verifyOtp = '';
-//         user.verifyOtpExpireAt == 0;
-
-//         await user.save();
-//         return res.json({ success: true, message: 'Email verification successfully' })
-
-
-//     } catch (error) {
-//         return res.json({ success: false, message: error.message })
-//     }
-// }
 
 //user authentication
 const isAuthenticated = async (req, res) => {
@@ -515,8 +336,7 @@ const isAuthenticated = async (req, res) => {
 
 const sendResetOtp = async (req, res) => {
     const { email } = req.body;
-    // const { email } = req.params;
-    // const email = 'purvapanwar394@gmail.com';
+ 
     console.log(email);
 
     if (!email) {
@@ -537,10 +357,9 @@ const sendResetOtp = async (req, res) => {
         // Send OTP email
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
-            to: user.email, // Fixed: Use `user.email` instead of undefined `email`
+            to: user.email, 
             subject: "Password reset  OTP",
-            // html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", otp).replace("{{email}}", user.email)
-            text: `Your OTP for resetting your password is ${otp} . Use this OTP to proceed with resetting your password.`,
+               text: `Your OTP for resetting your password is ${otp} . Use this OTP to proceed with resetting your password.`,
         };
 
         await transporter.sendMail(mailOptions);
@@ -611,4 +430,6 @@ const getVoter = async (req, res, next) => {
 
 
 
-module.exports = { registerVoter, loginVoter, logoutVoter, sendVerifyOtp, verifyEmail, isAuthenticated, sendResetOtp, resetPassword, getVoter }
+
+
+module.exports = { registerVoter, updateVoterProfile, loginVoter, logoutVoter, sendVerifyOtp, verifyEmail, isAuthenticated, sendResetOtp, resetPassword, getVoter }

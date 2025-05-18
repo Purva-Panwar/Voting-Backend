@@ -46,8 +46,8 @@ const AddCandidateModal = () => {
   };
 
   return (
-    <section className="modal">
-      <div className="modal_content">
+    <section className="modal ">
+      <div className="modal_content ">
         <header className="modal_header">
           <h4>Add Candidate</h4>
           <button className="modal_close" onClick={closeModal}>

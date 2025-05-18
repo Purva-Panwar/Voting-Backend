@@ -12,6 +12,7 @@ const Register = () => {
     age: "",
     idnumber: "",
     gender: "",
+    // thumbnail: "null",
   });
 
   const [error, setError] = useState("");
@@ -53,12 +54,13 @@ const Register = () => {
       return;
     }
 
+    //
     try {
       await axios.post(
         `${process.env.REACT_APP_API_URL}/voters/register`,
         userData
       );
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong.");
     } finally {
@@ -121,6 +123,14 @@ const Register = () => {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
+          {/* <div>
+            <input
+              type="file"
+              onChange={changeInputHandler}
+              accept="image/png, image/jpg, image/jpeg, image/webp, image/avif"
+              required
+            />
+          </div> */}
           {/* <p className="">
             <Link className="forgot-password" to="/reset-password">
               Forgot Password
@@ -139,7 +149,6 @@ const Register = () => {
 };
 
 export default Register;
-
 // import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import axios from "axios";
@@ -153,7 +162,9 @@ export default Register;
 //     password2: "",
 //     age: "",
 //     idnumber: "",
-
+//     gender: "",
+//     // mobile: "",
+//     // photo: null,
 //   });
 
 //   const [error, setError] = useState("");
@@ -179,30 +190,28 @@ export default Register;
 //       !userData.fullName ||
 //       !userData.email ||
 //       !userData.password ||
-//       !userData.password2 ||
+//       // !userData.password2 ||
 //       !userData.age ||
-//       !userData.idnumber
-
+//       !userData.idnumber ||
+//       !userData.gender
+//       // !userData.mobile ||
+//       // !userData.photo
 //     ) {
 //       setError("All fields are required.");
 //       setLoading(false);
 //       return;
 //     }
 
-//     if (userData.password !== userData.password2) {
-//       setError("Passwords do not match.");
-//       setLoading(false);
-//       return;
-//     }
-//     // const APP_URL = process.env.REACT_APP_API_URL;
+//     // if (userData.password !== userData.password2) {
+//     //   setError("Passwords do not match.");
+//     //   setLoading(false);
+//     //   return;
+//     // }
+
 //     try {
 //       await axios.post(
 //         `${process.env.REACT_APP_API_URL}/voters/register`,
 //         userData
-//         // {
-//         // headers: {
-//         //   "Content-Type": "application/json",
-//         // },}
 //       );
 //       navigate("/");
 //     } catch (err) {
@@ -240,13 +249,13 @@ export default Register;
 //             onChange={changeInputHandler}
 //             autoComplete="true"
 //           />
-//           <input
+//           {/* <input
 //             type="password"
 //             name="password2"
 //             placeholder="Confirm Password"
 //             onChange={changeInputHandler}
 //             autoComplete="true"
-//           />
+//           /> */}
 //           <input
 //             type="number"
 //             name="age"
@@ -261,7 +270,30 @@ export default Register;
 //             autoComplete="true"
 //             onChange={changeInputHandler}
 //           />
-
+//           <select name="gender" onChange={changeInputHandler}>
+//             <option value="">Select your gender</option>
+//             <option value="male">Male</option>
+//             <option value="female">Female</option>
+//             <option value="other">Other</option>
+//           </select>
+//           {/* <input
+//             type="number"
+//             name="mobile"
+//             placeholder="Voter Mobile Number"
+//             autoComplete="true"
+//             onChange={changeInputHandler}
+//           />
+//           <input
+//             type="file"
+//             name="photo"
+//             accept="image/*"
+//             onChange={changeInputHandler}
+//           /> */}
+//           {/* <p className="">
+//             <Link className="forgot-password" to="/reset-password">
+//               Forgot Password
+//             </Link>
+//           </p> */}
 //           <p>
 //             Already have an account? <Link to="/">Sign in</Link>
 //           </p>

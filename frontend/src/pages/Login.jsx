@@ -24,7 +24,7 @@ const Login = () => {
   useEffect(() => {
     dispatch(voteActions.changeCurrentVoter(null));
     localStorage.removeItem("currentUser");
-    navigate("/");
+    navigate("/login");
   }, []);
 
   //function to change controlled inputs
@@ -63,51 +63,61 @@ const Login = () => {
       localStorage.setItem("currentUser", JSON.stringify(newVoter));
       dispatch(voteActions.changeCurrentVoter(newVoter));
       setIsLoggedin(true);
-      navigate("/home");
+      navigate("/dashboard");
     } catch (err) {
       setError(err.response.data.message);
     }
   };
 
   return (
-    <section className="register">
-      <div className="container register_container">
-        <h2>Sign In</h2>
-        <form onSubmit={loginVoter}>
-          {error && <p className="form_error-message">{error}</p>}
-
-          {/* <p className="form_error-message">Any error from the backend</p> */}
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={changeInputHandler}
-            autoComplete="true"
-            autoFocus
+    <>
+      <section className="register login">
+        <p className="nav_logo head">
+          {/* <h1>E-VoteHub</h1> */}
+          <img
+            src="https://cdn-icons-png.flaticon.com/128/8487/8487642.png"
+            alt=""
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={changeInputHandler}
-            autoComplete="true"
-          />
+          e-Votehub
+        </p>
+        <div className="container register_container">
+          <h2>Sign In</h2>
+          <form onSubmit={loginVoter}>
+            {error && <p className="form_error-message">{error}</p>}
 
-          <p className="">
-            <Link to="/reset-password">Forgot Password</Link>
-          </p>
+            {/* <p className="form_error-message">Any error from the backend</p> */}
 
-          <p>
-            Dont have an account? <Link to="/register">Sign Up</Link>
-          </p>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={changeInputHandler}
+              autoComplete="true"
+              autoFocus
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={changeInputHandler}
+              autoComplete="true"
+            />
 
-          <button type="submit" className="btn primary">
-            Login
-          </button>
-        </form>
-      </div>
-    </section>
+            <p className="">
+              <Link to="/reset-password">Forgot Password</Link>
+            </p>
+
+            <p>
+              Dont have an account? <Link to="/register">Sign Up</Link>
+            </p>
+
+            <button type="submit" className="btn primary">
+              Login
+            </button>
+          </form>
+        </div>
+      </section>
+    </>
   );
 };
 

@@ -72,6 +72,27 @@ const Candidates = () => {
     }
   }, []);
 
+  const [isAccountVerified, setIsAccountVerified] = useState(false);
+
+  useEffect(() => {
+    const fetchVerificationStatus = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/voters/${voterId}`,
+          {
+            withCredentials: true,
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        setIsAccountVerified(response.data.isAccountVerified);
+      } catch (error) {
+        console.error("Error fetching verification status:", error);
+      }
+    };
+
+    fetchVerificationStatus();
+  }, [token, voterId]);
   // ✅ Added dependencies
 
   return (
@@ -92,14 +113,24 @@ const Candidates = () => {
           <>
             {candidates.length > 0 ? (
               <div className="can">
-                <header className="already-voted-container ">
-                  <h1>Vote for your candidate</h1>
-                  <p>
-                    These are the candidates for the selected election. Please
-                    vote wisely, as you won’t be able to vote again in this
-                    election.
-                  </p>
-                </header>
+                {isAccountVerified ? (
+                  <header className="already-voted-container ">
+                    <h1>Vote for your candidate</h1>
+                    <p>
+                      These are the candidates for the selected election. Please
+                      vote wisely, as you won’t be able to vote again in this
+                      election.
+                    </p>
+                  </header>
+                ) : (
+                  <header className="already-voted-container ">
+                    <h1>Vote for Election</h1>
+                    <p>
+                      Please firstly verify your Account for click above verify
+                      email link .After OTP verification you are able to vote.
+                    </p>
+                  </header>
+                )}
               </div>
             ) : (
               <header className="candidate_header">

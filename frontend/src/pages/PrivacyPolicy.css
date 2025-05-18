@@ -6,7 +6,9 @@
     padding: 20px;
     border-radius: 8px;
     max-width: 90%;
-    margin:120px  100px 70px 100px;
+    margin:100px  100px 70px 100px;
+    
+    background: linear-gradient(to bottom right, #f1f4f6, #eff6ff); /* light blue */
   }
   
   .privacy-image img {
@@ -19,6 +21,7 @@
   .privacy-content {
     flex: 1;
     padding-left: 20px;
+    margin: 0;
   }
   
   .privacy-content h2 {

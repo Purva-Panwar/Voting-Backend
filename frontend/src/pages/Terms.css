@@ -1,4 +1,4 @@
-/* Container for terms section */
+
 .terms-container {
     display: flex;
     flex-direction: row;
@@ -9,7 +9,8 @@
     border-radius: 8px;
     max-width: 90%;
     margin: auto;
-    margin-top: 80px;
+    margin-top: 50px;
+    /* margin-top: 100px; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     flex-wrap: wrap;
   }
@@ -30,6 +31,7 @@
   .terms-content {
     flex: 1;
     padding: 20px;
+    margin-top: 50px;
   }
   
   .terms-content h2 {
@@ -157,3 +159,107 @@
     display: flex;
     justify-content: right;
   }
+
+
+  /* General container styling */
+.terms-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+  gap: 2rem;
+}
+
+/* Image section */
+.terms-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Terms content styling */
+.terms-content {
+  background-color: #f9f9f9;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  color: #333;
+  width: 100%;
+}
+
+.terms-content h2 {
+  color: #1e1e2f;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.terms-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.terms-content li {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+.terms-content li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: #4fc3f7;
+  font-weight: bold;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.buttons .btn {
+  background-color: #1e1e2f;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.buttons .btn:hover {
+  background-color: #4fc3f7;
+  color: #1e1e2f;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+  .terms-container {
+    flex-direction: column;
+  }
+
+  .terms-content {
+    width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .terms-container {
+    padding: 1rem;
+  }
+
+  .terms-content {
+    padding: 1.5rem;
+  }
+
+  .buttons .btn {
+    width: 100%;
+  }
+}

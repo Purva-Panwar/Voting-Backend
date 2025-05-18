@@ -79,7 +79,6 @@ const ConfirmVote = ({ selectedElection }) => {
       console.error("Error confirming vote:", error.response?.data || error);
     }
   };
-  
 
   // Fetch candidate on component mount
   useEffect(() => {

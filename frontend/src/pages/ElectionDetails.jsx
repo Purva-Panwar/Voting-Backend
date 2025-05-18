@@ -25,6 +25,7 @@ const ElectionDetails = () => {
 
   const { id } = useParams();
   const dispatch = useDispatch();
+
   // const navigate = useNavigate();
   // const token = useSelector((state) => state?.vote?.currentVoter?.token);
   const isAdmin = useSelector((state) => state?.vote?.currentVoter?.isAdmin);
@@ -96,12 +97,16 @@ const ElectionDetails = () => {
       console.log(error);
     }
   };
-
+  // const startDate = election.startDate;
+  // startDate.split("T")[0];
   useEffect(() => {
     getElection();
     getCandidates();
     getVoters();
   }, []);
+  const handleClick = () => {
+    dispatch(UiActions.openUpdateElectionModal());
+  };
 
   // open add candidate modal
   const openModal = () => {
@@ -120,23 +125,64 @@ const ElectionDetails = () => {
             <div className="head">
               <h2 className="tit">{election.title}</h2>
               <p className="des">{election.description}</p>
-              <p className="date">Start Date : {election.startDate}</p>
-              <p className="date">End Date : {election.endDate}</p>
+
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <p className="date">
+                  Start Date : {election?.startDate?.split("T")[0] || "N/A"}
+                </p>
+                <p className="date">
+                  Start Time : {election?.startTime?.split("T")[0] || "N/A"}
+                </p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <p className="date">
+                  End Date : {election?.endDate?.split("T")[0] || "N/A"}
+                </p>
+                <p className="date">
+                  End Time : {election?.endTime?.split("T")[0] || "N/A"}
+                </p>
+              </div>
             </div>
           </div>
+          <div>
+            {/* <p className="date">
+              Start Date : {election?.startDate?.split("T")[0] || "N/A"}
+            </p>
+            <p className="date">
+              Start Time : {election?.startTime?.split("T")[0] || "N/A"}
+            </p>
+            <p className="date">
+              End Date : {election?.endDate?.split("T")[0] || "N/A"}
+            </p>
+            <p className="date">
+              End Time : {election?.endTime?.split("T")[0] || "N/A"}
+            </p> */}
+          </div>
+
           <menu className="electionDetails_candidates">
-            {candidates.map((candidate) => (
-              <ElectionCandidate key={candidate._id} {...candidate} />
-            ))}
-            {isAdmin && (
-              <button className="add_candidate-btn" onClick={openModal}>
-                <IoAddOutline />
-              </button>
-            )}
+            <h1>Election CAndidates</h1>
+            <div className="electionDetails_candidates1">
+              {candidates.map((candidate) => (
+                <ElectionCandidate key={candidate._id} {...candidate} />
+              ))}
+              {isAdmin && (
+                <button className="add_candidate-btn" onClick={openModal}>
+                  <IoAddOutline />
+                </button>
+              )}
+            </div>
           </menu>
 
           <menu className="voters">
-            <h2>Voters</h2>
+            <h2
+              style={{
+                background: " rgb(23, 23, 117)",
+                color: "white",
+                paddingBottom: "12px",
+              }}
+            >
+              Voters
+            </h2>
             <table className="voters_table">
               <thead>
                 <tr>
@@ -158,11 +204,20 @@ const ElectionDetails = () => {
               </tbody>
             </table>
           </menu>
-          {isAdmin && (
+          <div className="election-actions">
+            {isAdmin && (
+              <>
+                <button className="btn danger full" onClick={deleteElection}>
+                  Delete Election
+                </button>
+              </>
+            )}
+          </div>
+          {/* {isAdmin && (
             <button className="btn danger full" onClick={deleteElection}>
               Delete Election
             </button>
-          )}
+          )} */}
         </div>
       </section>
 

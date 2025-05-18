@@ -268,7 +268,7 @@ const Works = () => {
           <p>Stop</p>
         </div>
       </section>
-      <footer className="footer">
+      {/* <footer className="footer">
         <div className="footer-container">
           <div className="footer-section">
             <h3>Products</h3>
@@ -378,7 +378,7 @@ const Works = () => {
         <div className="footer-bottom">
           <p>@panwarwpurva394@gmail.com</p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };

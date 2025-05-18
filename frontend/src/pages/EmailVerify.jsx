@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 // import "./EmailVerify.css"; // Import the CSS file
@@ -50,7 +50,7 @@ const EmailVerify = () => {
 
       if (response.data.success) {
         console.log(response.data.message);
-        navigate("/home");
+        navigate("/");
       }
     } catch (error) {
       console.error(
@@ -62,6 +62,11 @@ const EmailVerify = () => {
 
   return (
     <div className="email-verify-container">
+      {" "}
+      <div className="alert">
+        <p>📩 Verification code has been sent to your email ID.</p>
+      </div>
+      <br />
       <div className="email-verify-box">
         <form onSubmit={onSubmitHandler}>
           <h1>Email Verification</h1>

@@ -75,13 +75,13 @@ const Terms = () => {
   }, [token, voterId]);
   return (
     <>
-      <div className="terms-container">
-        <div className="terms-image">
+      <div className="">
+        {/* <div className="terms-image">
           <img
             src="https://img.freepik.com/premium-vector/electronic-contract-online-contract-concept-with-character-e-contract-document-sign-via-smartphone_269730-261.jpg?ga=GA1.1.346386233.1742042256&semt=ais_hybrid"
             alt="Online Voting System"
           />
-        </div>
+        </div> */}
         <div className="terms-content">
           <h2>Terms and Conditions of Online Voting System</h2>
           <ul>
@@ -141,16 +141,16 @@ const Terms = () => {
                 Start Now
               </NavLink>
             )}
-            {isAccountVerified && (
+            {/* {isAccountVerified && (
               <a href="elections">
                 <button className="btn btn-primary">Start now</button>
               </a>
-            )}
+            )} */}
           </div>
         </div>
       </div>
 
-      <footer className="footer">
+      {/* <footer className="footer">
         <div className="footer-container">
           <div className="footer-section">
             <h3>Products</h3>
@@ -260,7 +260,7 @@ const Terms = () => {
         <div className="footer-bottom">
           <p>@panwarwpurva394@gmail.com</p>
         </div>
-      </footer>
+      </footer> */}
     </>
   );
 };

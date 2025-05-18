@@ -13,6 +13,8 @@ import {
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 
+
+
 const Home = () => {
   const [show, setShow] = useState(false);
   const [isAccountVerified, setIsAccountVerified] = useState(false);
@@ -96,30 +98,46 @@ const Home = () => {
             {/* <a href="elections">
               <button >Start now</button>
             </a> */}
-            {!isAccountVerified && token && (
-              <NavLink
-                className="start-button"
-                to="/email-verify"
-                onClick={(e) => {
-                  e.preventDefault();
-                  sendVerificationOtp(voterId, token);
-                  // setShowNav(false);
-                }}
-              >
-                Start Now
-              </NavLink>
-            )}
             {isAccountVerified && (
               <a href="elections">
                 <button className="start-button">Start now</button>
               </a>
             )}
-            <a href="contact">
-              <button className="contact-button">Contact</button>
-            </a>
+            {!token ? (
+              <>
+                <NavLink className="start-button" to="/register">
+                  Register
+                </NavLink>
+                <NavLink className="start-button" to="/login">
+                  Login
+                </NavLink>
+              </>
+            ) : (
+              <>
+                {!isAccountVerified && token && (
+                  <NavLink
+                    className="start-button"
+                    to="/email-verify"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      sendVerificationOtp(voterId, token);
+                      // setShowNav(false);
+                    }}
+                  >
+                    Start Now
+                  </NavLink>
+                )}
+                <NavLink to="/contact">
+                  <button className="contact-button">Contact</button>
+                </NavLink>
+              </>
+            )}
+            {/*  */}
+
+            {/*  */}
           </div>
         </div>
-        <div className="banner-image">
+        <div className="voting-left">
           <img
             src="https://img.freepik.com/free-vector/international-day-democracy_23-2148608691.jpg?ga=GA1.1.370840.1738764703&semt=ais_hybrid"
             alt="Voting"
@@ -128,7 +146,7 @@ const Home = () => {
         </div>
       </div>
       <div className="steps-container">
-        <div className="steps-image">
+        <div className="voting-left">
           <img
             src="https://www.polyas.de/wp-content/uploads/2021/08/DSCF5516_bearb_5.jpg.webp"
             alt="Voting process"
@@ -191,7 +209,7 @@ const Home = () => {
           />
         </div>
       </div>
-     
+
       <div className="voting-container ">
         <div className="voting-left">
           <img
@@ -216,117 +234,7 @@ const Home = () => {
           <p>Vote – from any device and from anywhere in the world!</p>
         </div>
       </div>
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-section">
-            <h3>Products</h3>
-            <ul>
-              <li>
-                🗳️
-                <a href="/home"> Online Voting</a>
-              </li>
-              <li>
-                {" "}
-                ⚙️
-                <a href="/works"> How it works!</a>
-              </li>
-              <li>
-                🔒
-                <a href="/privacy">Privacy Policy</a>
-              </li>
-              <li>
-                {" "}
-                📜
-                <a href="/terms">Terms and Condition</a>
-              </li>
-              <li>
-                <span>📞 </span>
-                <a href="/contact">Contact Us</a>
-              </li>
-            </ul>
-          </div>
-
-          <div className="footer-section follow">
-            <h3>Follow Us</h3>
-            <div className="flex logo space-x-4 logo">
-              <a
-                href="https://www.instagram.com/purvi.rajput17/?utm_source=qr&r=nametag"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FontAwesomeIcon
-                  icon={faInstagram}
-                  size="3x"
-                  style={{ color: "#E4405F" }}
-                />
-              </a>
-              <br />
-              <a
-                href="https://github.com/Purva-Panwar"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FontAwesomeIcon
-                  icon={faGithub}
-                  size="3x"
-                  style={{ color: "#333" }}
-                />
-              </a>
-              <br />
-              <a
-                href="https://www.linkedin.com/in/purva-panwar-797931293?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FontAwesomeIcon
-                  icon={faLinkedin}
-                  size="3x"
-                  style={{ color: "#0077B5" }}
-                />
-              </a>
-              <br />
-              <a
-                href="https://youtube.com/@purvapanwar4273?si=VFG410iNRKscqVvc"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FontAwesomeIcon
-                  icon={faYoutube}
-                  size="3x"
-                  style={{ color: "#0088CC" }}
-                />
-              </a>
-            </div>
-          </div>
-
-          <div className="footer-section">
-            <h3>Our certificates</h3>
-            <div className="certificates ">
-              <img
-                className="image1"
-                src="https://www.polyas.com/wp-content/uploads/2024/07/BSI-certificate-online-voting.png"
-                alt="Certificate 1"
-              />
-              <img
-                src="https://www.polyas.com/wp-content/uploads/2024/11/ISO-Logo-neu-freigestellt-2024.png"
-                alt="Certificate 2"
-              />
-            </div>
-          </div>
-
-          <div className=" ftr">
-            <img
-              src="https://img.freepik.com/premium-vector/vote-india-general-election-political-background-with-hand-finger-lineart-design_586724-494.jpg?ga=GA1.1.346386233.1742042256&semt=ais_hybrid"
-              alt=""
-            />
-            <br />
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <p>@panwarwpurva394@gmail.com</p>
-        </div>
-      </footer>
+     
     </>
   );
 };

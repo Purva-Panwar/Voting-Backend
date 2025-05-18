@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CandidateRating from "./CandidateRating";
-import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 const ResultElection = ({ _id: id, thumbnail, title, startDate, endDate }) => {
   const [totalVotes, setTotalVotes] = useState(0);
@@ -11,15 +11,15 @@ const ResultElection = ({ _id: id, thumbnail, title, startDate, endDate }) => {
   const [loading, setLoading] = useState(false);
 
   const token = useSelector((state) => state?.vote?.currentVoter?.token);
-  const isAdmin = useSelector((state) => state?.vote?.currentVoter?.isAdmin);
+  const navigate = useNavigate();
 
-  // Convert dates to JavaScript Date objects
+  // Convert startDate and endDate into Date objects
   const now = new Date();
-  // const start = new Date(startDate);
+  const start = new Date(startDate);
   const end = new Date(endDate);
 
-  // Election status
-  // const isElectionActive = now >= start && now <= end;
+  // Election visibility conditions
+  const isElectionStarted = now >= start;
   const isElectionEnded = now > end;
 
   const getCandidates = async () => {
@@ -33,13 +33,18 @@ const ResultElection = ({ _id: id, thumbnail, title, startDate, endDate }) => {
         }
       );
 
-      const candidates = await response.data;
+      let candidates = await response.data;
+
+      // Sort candidates by vote count in descending order
+      candidates.sort((a, b) => b.voteCount - a.voteCount);
+
       setElectionCandidates(candidates);
 
-      let total = 0;
-      candidates.forEach((candidate) => {
-        total += candidate.voteCount;
-      });
+      // Calculate total votes
+      const total = candidates.reduce(
+        (sum, candidate) => sum + candidate.voteCount,
+        0
+      );
       setTotalVotes(total);
     } catch (error) {
       console.error(
@@ -60,29 +65,50 @@ const ResultElection = ({ _id: id, thumbnail, title, startDate, endDate }) => {
     <>
       {loading && <Loader />}
       <article className="result">
-        {/* Show results only if election has ended or user is admin */}
-        <header className="result_header">
-          <h4>{title}</h4>
-          <div className="result_header-image">
-            <img src={thumbnail} alt={title} />
-          </div>
-        </header>
-        {isElectionEnded ? (
-          <div>
-            <ul className="result_list">
-              {electionCandidates.map((candidate) => (
-                <CandidateRating
-                  key={candidate._id}
-                  {...candidate}
-                  totalVotes={totalVotes}
-                />
-              ))}
-            </ul>
-          </div>
+        {/* Show results only if the election has started */}
+        {isElectionStarted ? (
+          <>
+            <header className="result_header">
+              <h4>{title}</h4>
+              <div className="result_header-image">
+                <img src={thumbnail} alt={title} />
+              </div>
+            </header>
+
+            <div>
+              {electionCandidates.length > 0 && isElectionEnded && (
+                <div className="winner-section">
+                  <h2>🏆 Election Winner</h2>
+                  <div className="winner-details">
+                    <img
+                      src={electionCandidates[0].image}
+                      alt={electionCandidates[0].fullName}
+                    />
+                    <h3>{electionCandidates[0].fullName}</h3>
+                    <p>
+                      Total Votes:{" "}
+                      <strong>
+                        {electionCandidates[0].voteCount}/{totalVotes}
+                      </strong>
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <button
+                className="enter-election-btn"
+                onClick={() =>
+                  navigate(`/poll/${id}`, {
+                    state: { electionCandidates, totalVotes, title, thumbnail },
+                  })
+                }
+              >
+                Result
+              </button>
+            </div>
+          </>
         ) : (
-          <p className="info">
-            <b> Results will be available after the election ends.</b>
-          </p>
+          <p>🕒 Election results will be available after the end date.</p>
         )}
       </article>
     </>
@@ -93,36 +119,49 @@ export default ResultElection;
 
 // import React, { useEffect, useState } from "react";
 // import CandidateRating from "./CandidateRating";
-// import { Link } from "react-router-dom";
 // import { useSelector } from "react-redux";
 // import axios from "axios";
 // import Loader from "./Loader";
+// import { useNavigate } from "react-router-dom";
 
-// const ResultElection = ({ _id: id, thumbnail, title }) => {
+// const ResultElection = ({ _id: id, thumbnail, title, startDate, endDate }) => {
 //   const [totalVotes, setTotalVotes] = useState(0);
 //   const [electionCandidates, setElectionCandidates] = useState([]);
 //   const [loading, setLoading] = useState(false);
+
 //   const token = useSelector((state) => state?.vote?.currentVoter?.token);
+//   const navigate = useNavigate();
+//   // Convert dates to JavaScript Date objects
+//   const now = new Date();
+//   const end = new Date(endDate);
+
+//   // Check if the election has ended
+//   const isElectionEnded = now > end;
 
 //   const getCandidates = async () => {
-
 //     try {
 //       setLoading(true);
 //       const response = await axios.get(
 //         `${process.env.REACT_APP_API_URL}/elections/${id}/candidates`,
 //         {
 //           withCredentials: true,
-//           headers: { Authorization: `Bearer ${token}` }, // Remove extra space
+//           headers: { Authorization: `Bearer ${token}` },
 //         }
 //       );
 
-//       const candidates = await response.data;
+//       let candidates = await response.data;
+
+//       // Sort candidates by vote count in descending order
+//       candidates.sort((a, b) => b.voteCount - a.voteCount);
+
 //       setElectionCandidates(candidates);
 
-//       for (let i = 0; i < candidates.length; i++) {
-//         setTotalVotes((prevState) => (prevState += candidates[i].voteCount));
-//       }
-
+//       // Calculate total votes
+//       const total = candidates.reduce(
+//         (sum, candidate) => sum + candidate.voteCount,
+//         0
+//       );
+//       setTotalVotes(total);
 //     } catch (error) {
 //       console.error(
 //         "Error fetching candidates:",
@@ -136,93 +175,67 @@ export default ResultElection;
 //     if (id && token) {
 //       getCandidates();
 //     }
-//   }, [id, token]); // Include id and token as dependencies
+//   }, [id, token]);
 
 //   return (
 //     <>
 //       {loading && <Loader />}
 //       <article className="result">
-//         <header className="result_header">
-//           <h4>{title}</h4>
-//           <div className="result_header-image">
-//             <img src={thumbnail} alt={title} />
-//           </div>
-//         </header>
-//         <ul className="result_list">
-//           {electionCandidates.map((candidate) => (
-//             <CandidateRating
-//               key={candidate._id}
-//               {...candidate}
-//               totalVotes={totalVotes}
-//             />
-//           ))}
-//         </ul>
+//         {/* Show results only if the election has ended */}
+//         {isElectionEnded && (
+//           <>
+//             <header className="result_header">
+//               <h4>{title}</h4>
+//               <div className="result_header-image">
+//                 <img src={thumbnail} alt={title} />
+//               </div>
+//             </header>
 
+//             <div>
+//               {electionCandidates.length > 0 && (
+//                 <div className="winner-section">
+//                   <h2>🏆 Election Winner</h2>
+//                   <div className="winner-details">
+//                     <img
+//                       src={electionCandidates[0].image}
+//                       alt={electionCandidates[0].fullName}
+//                     />{" "}
+//                     <h3>{electionCandidates[0].fullName}</h3>
+//                     <p>
+//                       Total Votes:{" "}
+//                       <strong>
+//                         {electionCandidates[0].voteCount}/{totalVotes}
+//                       </strong>
+//                       {/* <stron></strong> */}
+//                     </p>
+//                   </div>
+//                 </div>
+//               )}
+//               <button
+//                 className="enter-election-btn"
+//                 onClick={() =>
+//                   navigate(`/poll/${id}`, {
+//                     state: { electionCandidates, totalVotes, title, thumbnail },
+//                   })
+//                 }
+//               >
+//                 Result
+//               </button>
+//               {/* <button className="enter-election-btn">Result</button> */}
+//               {/* <ul className="result_list">
+//                 {electionCandidates.map((candidate) => (
+//                   <CandidateRating
+//                     key={candidate._id}
+//                     {...candidate}
+//                     totalVotes={totalVotes}
+//                   />
+//                 ))}
+//               </ul> */}
+//             </div>
+//           </>
+//         )}
 //       </article>
 //     </>
-//   );
-// };
-
-// export default ResultElection;}
-
-// //yourube
-// import React, { useEffect, useState } from "react";
-// import CandidateRating from "./CandidateRating";
-// import { Link } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import axios from "axios";
-
-// const ResultElection = ({ _id: id, thumbnail, title }) => {
-//   const [totalVotes, setTotalVotes] = useState(0);
-//   const [electionCandidates, setElectionCandidates] = useState([]);
-//   const token =
-//     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjZkYTMxNWI4MzM5YWM0MjgxOGMzZiIsImlzQWRtaW4iOnRydWUsImlhdCI6MTc0MDczMTU5MCwiZXhwIjoxNzQwODE3OTkwfQ.SezEwQGXDDeeynE0_0PMXp16MXRFX9qISgy05AO5kqw";
-//   // const token = useSelector((state) => state?.vote?.currentVoter?.token);
-
-//   const getCandidates = async () => {
-//     try {
-//       const response = await axios.get(
-//         `${process.env.REACT_APP_API_URL}/elections/${id}/candidates`,
-//         {
-//           withCredentials: true,
-//           headers: { Authorization: `Bearer  ${token}` },
-//         }
-//       );
-
-//       const candidates = await response.data;
-//       setElectionCandidates(candidates);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getCandidates();
-//   }, []);
-//   // const electionCandidates = candidates.filter((candidate) => {
-//   //   return candidate.election == id;
-//   // });
-//   return (
-//     <article className="result">
-//       <header className="result_header">
-//         <h4>{title}</h4>
-//         <div className="result_header-image">
-//           <img src={thumbnail} alt={title} />
-//         </div>
-//       </header>
-//       <ul className="result_list">
-//         {electionCandidates.map((candidate) => (
-//           <CandidateRating
-//             key={candidate.id}
-//             {...candidate}
-//             totalVotes={totalVotes}
-//           />
-//         ))}
-//       </ul>
-//       <Link to={`/elections/${id}/candidates`} className="btn primary full">
-//         Enter Election
-//       </Link>
-//     </article>
 //   );
 // };
 

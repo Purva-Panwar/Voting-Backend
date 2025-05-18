@@ -7,7 +7,18 @@ import { AiOutlineClose } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import "../store/vote-slice";
-
+import {
+  Home,
+  Info,
+  LogOut,
+  Phone,
+  Clipboard,
+  PieChart,
+  LogIn,
+  Layers,
+  Mail,
+} from "lucide-react";
+import Features from "../pages/Features";
 const Navbar = () => {
   const navigate = useNavigate();
   const [showNav, setShowNav] = useState(
@@ -84,40 +95,104 @@ const Navbar = () => {
   return (
     <nav>
       <div className="container nav_container">
-        <Link to="/" className="nav_logo">
-          <h1>Smart-Vote</h1>
-        </Link>
+        <div>
+          <Link to="/" className="nav_logo">
+            {/* <h1>E-VoteHub</h1> */}
+            <img
+              src="https://cdn-icons-png.flaticon.com/128/8487/8487642.png"
+              alt=""
+            />
+            e-Votehub
+          </Link>
+        </div>
 
         <div>
-          {token && isAccountVerified && showNav && (
+          {/* {token && isAccountVerified && showNav && ( */}
+          {showNav && (
             <menu>
-              <NavLink to="/home" onClick={closeNavMenu}>
-                Home
+              <div className="link">
+                <NavLink to="/" onClick={closeNavMenu}>
+                  <Home /> <br /> <i class="fa-solid fa-house"></i>Home
+                </NavLink>
+              </div>
+              <NavLink to="/about" onClick={closeNavMenu}>
+                <Info />
+                <br />
+                About
               </NavLink>
-              <NavLink to="/elections" onClick={closeNavMenu}>
-                Elections
+              <NavLink to="/contact" onClick={closeNavMenu}>
+                <Phone />
+                <br />
+                Contact
               </NavLink>
-              <NavLink to="/results" onClick={closeNavMenu}>
-                Results
+              <NavLink to="/features" onClick={closeNavMenu}>
+                <Layers />
+                <br />
+                Features
               </NavLink>
-              <NavLink to="/logout" onClick={closeNavMenu}>
-                Logout
-              </NavLink>
+
+              {token ? (
+                <>
+                  {!isAccountVerified && token && (
+                    <>
+                      <NavLink
+                        to="/email-verify"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sendVerificationOtp(voterId, token);
+
+                          // setShowNav(false);
+                        }}
+                      >
+                        <Mail />
+                        <br />
+                        Verify Email
+                      </NavLink>
+                    </>
+                  )}
+                  <NavLink to="/logout" onClick={closeNavMenu}>
+                    <LogOut />
+                    <br />
+                    Logout
+                  </NavLink>
+                  <div className="profile-contain ">
+                    <NavLink
+                      to="/profile"
+                      onClick={closeNavMenu}
+                      className="profile-initial "
+                    >
+                      <img
+                        src="https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?ga=GA1.1.346386233.1742042256&semt=ais_hybrid"
+                        alt=""
+                      />
+                    </NavLink>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* <NavLink to="/elections" onClick={closeNavMenu}>
+                    <Clipboard />
+                    <br />
+                    Election
+                  </NavLink>
+                  <NavLink to="/results" onClick={closeNavMenu}>
+                    <PieChart />
+                    <br />
+                    Result
+                  </NavLink> */}
+                  <NavLink to="/login" onClick={closeNavMenu}>
+                    <LogIn />
+                    <br />
+                    Login
+                  </NavLink>
+                  {/* <NavLink to="/register" onClick={closeNavMenu}>
+                    Register
+                  </NavLink> */}
+                </>
+              )}
 
               {/* ✅ Only show Verify Email button if voterEmail exists and is not verified */}
             </menu>
-          )}
-          {!isAccountVerified && token && (
-            <NavLink
-              to="/email-verify"
-              onClick={(e) => {
-                e.preventDefault();
-                sendVerificationOtp(voterId, token);
-                // setShowNav(false);
-              }}
-            >
-              Verify Email
-            </NavLink>
           )}
 
           {/* <button
@@ -145,278 +220,63 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
+      <style>
+        {`
+        .verify-btn-nav{
+        background-color:orange;
+        padding:7px 10px;
+         border-radius: 7px;
+        }
+        .profile-contain {
+          position: relative;
+          display: inline-block;
+          margin-left: 10px;
+          cursor: pointer;
+           background-color: rgb(14, 14, 90);
+       
+          border:none;
+         
+          border-radius: 50%;
+        }
+
+        .profile-initial {
+          width: 50px;
+          height: 50px;
+         
+          color: white;
+          font-size: 30px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+        }
+        .profile-initial img{
+           border-radius: 50%;
+           }
+           @media (max-width: 768px){
+           .profile-contain{
+           width:20px;
+           height:20px;
+           margin:25px;
+           }
+           .profile-initial {
+           width:20px;
+           height:20px;
+           }
+               .profile-initial img{
+                width:50px;
+           height:50px;
+           
+               }
+           }
+               
+      
+      `}
+      </style>
     </nav>
   );
 };
 
 export default Navbar;
-
-// import React, { useEffect, useState } from "react";
-// import { Link, NavLink, useNavigate } from "react-router-dom";
-// import { IoIosMoon } from "react-icons/io";
-// import { IoMdSunny } from "react-icons/io";
-// import { HiOutlineBars3 } from "react-icons/hi2";
-// import { AiOutlineClose } from "react-icons/ai";
-// import { useSelector } from "react-redux";
-// import axios from "axios";
-// // import { errorHandler } from "../../../backend/middleware/errorMiddleware";
-
-// const Navbar = () => {
-//   const navigate = useNavigate();
-//   const [showNav, setShowNav] = useState(
-//     window.innerWidth < 600 ? false : true
-//   );
-//   const [darkTheme, setDarkTheme] = useState(
-//     localStorage.getItem("voting-app-theme") || ""
-//   );
-
-//   const [isAccountVerified, setIsAccountVerified] = useState(false); // Store email verification status
-//   const token = useSelector((state) => state?.vote?.currentVoter?.token);
-//   const voterEmail = useSelector((state) => state?.vote?.currentVoter?.email);
-//   // const voterEmail = useSelector((state) => state?.vote?.currentVoter?.email);
-
-//   const sendVerificationOtp = async (email, token) => {
-//     console.log(email);
-
-//     try {
-//       // Get the voter's email from the Redux store
-
-//       if (!email) {
-//         console.error("Voter email is missing.");
-//         return;
-//       }
-
-//       const response = await axios.post(
-//         `${process.env.REACT_APP_API_URL}/voters/send-otp`,
-//         { email }, // ✅ Send email in request body
-//         {
-//           withCredentials: true,
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       if (response.data.success) {
-//         // ✅ Corrected success check
-//         console.log(response.data.message);
-//         navigate("/email-verify");
-//       }
-//     } catch (error) {
-//       console.error(
-//         "Error sending OTP:",
-//         error.response?.data?.message || error.message
-//       );
-//     }
-//   };
-
-//   // const sendVerificationOtp = async () => {
-//   //   try {
-//   //     const response = await axios.post(
-//   //       `${process.env.REACT_APP_API_URL}/voters/send-otp`,
-//   //       {},
-//   //       {
-//   //         withCredentials: true,
-//   //         headers: { Authorization: `Bearer ${token}` },
-//   //       }
-//   //     );
-//   //     if (response.success) {
-//   //       navigate("/email-verify");
-//   //       console.log(response.message);
-//   //     }
-//   //   } catch (error) {
-//   //     console.log(error);
-//   //   }
-//   // };
-//   // Function to close nav menu on small screens
-//   const closeNavMenu = () => {
-//     if (window.innerWidth < 600) {
-//       setShowNav(false);
-//     } else {
-//       setShowNav(true);
-//     }
-//   };
-
-//   // Function to change theme
-//   const changeThemeHandler = () => {
-//     if (localStorage.getItem("voting-app-theme") === "dark") {
-//       localStorage.setItem("voting-app-theme", "");
-//     } else {
-//       localStorage.setItem("voting-app-theme", "dark");
-//     }
-//     setDarkTheme(localStorage.getItem("voting-app-theme"));
-//   };
-
-//   useEffect(() => {
-//     document.body.className = localStorage.getItem("voting-app-theme");
-//   }, [darkTheme]);
-//   const voterId = useSelector((state) => state?.vote?.currentVoter?.id);
-//   // Fetch user verification status from the backend
-//   useEffect(() => {
-//     const fetchVerificationStatus = async () => {
-//       try {
-//         if (!token || !voterId) {
-//           console.log("token , voterid not found");
-//         }
-
-//         const response = await axios.get(
-//           `${process.env.REACT_APP_API_URL}/voters/${voterId}`,
-//           {
-//             withCredentials: true,
-//             headers: { Authorization: `Bearer ${token}` },
-//           }
-//         );
-
-//         setIsAccountVerified(response.data.isAccountVerified);
-//       } catch (error) {
-//         console.error("Error fetching verification status:", error);
-//       }
-//     };
-
-//     fetchVerificationStatus();
-//   }, [token]);
-
-//   return (
-//     <nav>
-//       <div className="container nav_container">
-//         <Link to="/" className="nav_logo">
-//           <h1>Smart-Vote</h1>
-//         </Link>
-//         <div>
-//           {token && showNav && (
-//             <menu>
-//               <NavLink to="/elections" onClick={closeNavMenu}>
-//                 Elections
-//               </NavLink>
-//               <NavLink to="/results" onClick={closeNavMenu}>
-//                 Results
-//               </NavLink>
-//               <NavLink to="/logout" onClick={closeNavMenu}>
-//                 Logout
-//               </NavLink>
-
-//               {/* Show Verify Email only if the user is NOT verified */}
-//               {!isAccountVerified && (
-//                 <NavLink
-//                   to="/email-verify"
-//                   onClick={(e) => {
-//                     e.preventDefault(); // Prevents navigation if needed
-//                     sendVerificationOtp(voterEmail, token);
-//                     closeNavMenu();
-//                   }}
-//                   // onClick={(sendVerificationOtp, closeNavMenu)}
-//                 >
-//                   Verify Email
-//                 </NavLink>
-//               )}
-//             </menu>
-//           )}
-
-//           <button className="theme_toggle-btn" onClick={changeThemeHandler}>
-//             {darkTheme ? <IoMdSunny /> : <IoIosMoon />}
-//           </button>
-//           <button
-//             className="nav_toggle-btn"
-//             onClick={() => setShowNav(!showNav)}
-//           >
-//             {showNav ? <AiOutlineClose /> : <HiOutlineBars3 />}
-//           </button>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
-// // import React, { useContext, useEffect, useState } from "react";
-// // import { Link, NavLink, useNavigate } from "react-router-dom";
-// // import { IoIosMoon } from "react-icons/io";
-// // import { IoMdSunny } from "react-icons/io";
-// // import { HiOutlineBars3 } from "react-icons/hi2";
-// // import { AiOutlineClose } from "react-icons/ai";
-// // import { useSelector } from "react-redux";
-// // import { AppContext } from "../context/AppContext";
-
-// // const Navbar = () => {
-
-// //   const [showNav, setShowNav] = useState(
-// //     window.innerWidth < 600 ? false : true
-// //   );
-// //   const [darkTheme, setDarkTheme] = useState(
-// //     localStorage.getItem("voting-app-theme") || ""
-// //   );
-// //   const token = useSelector((state) => state?.vote?.currentVoter?.token);
-
-// //   //function to close nav menu on small screens when menu link
-// //   const closeNavMenu = () => {
-// //     if (window.innerWidth < 600) {
-// //       setShowNav(false);
-// //     } else {
-// //       setShowNav(true);
-// //     }
-// //   };
-
-// //   //function to change toggle theme
-// //   const changeThemeHandler = () => {
-// //     if (localStorage.getItem("voting-app-theme") === "dark") {
-// //       localStorage.setItem("voting-app-theme", "");
-// //     } else {
-// //       localStorage.setItem("voting-app-theme", "dark");
-// //     }
-// //     setDarkTheme(localStorage.getItem("voting-app-theme"));
-// //   };
-
-// //   useEffect(() => {
-// //     document.body.className = localStorage.getItem("voting-app-theme");
-// //   }, [darkTheme]);
-
-// //   return (
-// //     <nav>
-// //       <div className="container nav_container">
-// //         <Link to="/" className="nav_logo">
-// //           <h1>Smart-Vote</h1>
-// //         </Link>
-// //         <div>
-// //           {token && showNav && (
-// //             <menu>
-// //               <NavLink to="/elections" onClick={closeNavMenu}>
-// //                 {" "}
-// //                 Elections{" "}
-// //               </NavLink>
-// //               <NavLink to="/results" onClick={closeNavMenu}>
-// //                 Results
-// //               </NavLink>
-// //               <NavLink to="/logout" onClick={closeNavMenu}>
-// //                 {" "}
-// //                 Logout{" "}
-// //               </NavLink>
-// //               <NavLink to="/verify-email" onClick={closeNavMenu}>
-// //                 {" "}
-// //                 Verify Email{" "}
-// //               </NavLink>
-// //               {/* {voterData ? (
-// //                 <div>{voterData.fullName[0].toUpperCase()}</div>
-// //               ) : (
-// //                 <NavLink to="/login" onClick={closeNavMenu}>
-// //                   {" "}
-// //                   Login{" "}
-// //                 </NavLink>
-// //               )} */}
-// //             </menu>
-// //           )}
-
-// //           <button className="theme_toggle-btn" onClick={changeThemeHandler}>
-// //             {darkTheme ? <IoMdSunny /> : <IoIosMoon />}
-// //           </button>
-// //           <button
-// //             className="nav_toggle-btn"
-// //             onClick={() => setShowNav(!showNav)}
-// //           >
-// //             {showNav ? <AiOutlineClose /> : <HiOutlineBars3 />}
-// //           </button>
-// //         </div>
-// //       </div>
-// //     </nav>
-// //   );
-// // };
-
-// // export default Navbar;

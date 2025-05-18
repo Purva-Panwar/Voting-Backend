@@ -5,6 +5,7 @@
     background: linear-gradient(to right, #f8f9fa, #e3f2fd);
     padding: 40px;
     border-radius: 10px;
+    margin-top: 60px;
     /* background-color: red; */
    
     /* text-align: center; */
@@ -108,13 +109,14 @@
     padding: 60px 40px;
     background-color: #f8f9fa;
     border-radius: 10px;
+    margin-left: 120px;
     /* max-width: 1200px; */
   }
   
   .steps-image {
     flex: 1;
     max-width: 30%;
-    margin-left: 140px;
+    margin-left: 40px;
   }
   
   .steps-image img {
@@ -179,6 +181,7 @@
     max-width: 1300px;
     margin: 30px auto;
     padding: 60px 20px;
+    margin-left: 120px;
     /* margin: 40px 0; */
   }
   
@@ -256,6 +259,7 @@
   /* padding:60px 30px; */
   gap: 20px;
   background-color: #ddedfd;
+  margin-left: 120px;
 }
 
 .voting-left {
@@ -349,13 +353,14 @@
 }
 /* /////5 */
 .footer {
-    /* background: #e0e4e7; */
-    /* padding: 60px 20px 0 20px; */
+   
+    padding: 60px 20px 0 20px;
     max-width: 100%;
+    position: sticky;
     /* margin: 0 7%; */
-    padding: 5px 7% 2px 10%;
-    background-color: rgb(204, 204, 238);
-    
+    /* padding: 0px 7% 0px 10%; */
+   
+    background-color:rgb(124, 146, 207);
 
   }
   
@@ -370,9 +375,9 @@
   
   .footer-section {
     flex: 1;
-    padding-top: 10px;
+    /* padding-top: 10px; */
     min-width: 200px;
-    margin: 10px;
+    /* margin: 10px; */
     gap: 20px;
     color: darkblue;
   
@@ -386,7 +391,7 @@
   }
   
   .footer-section ul {
-    margin-top: 20px;
+    /* margin-top: 20px; */
     list-style: none;
     padding: 0;
   }
@@ -395,7 +400,7 @@
   }
   
   .footer-section ul li {
-    margin: 5px 0;
+    /* margin: 5px 0; */
      font-weight: 600;
      
   }
@@ -406,8 +411,8 @@
    
   }
   .certificates .image1 {
-    width: 130px;
-    margin: 10px;
+    width: 100px;
+    /* margin: 10px; */
    
   }
   .image{
@@ -417,9 +422,17 @@
     width: 100%;
     padding: 5px;
   }
+  .ftr img{
+    height: 120px;
+width: 180px;
+
+  }
   .logo{
     gap: 10px;
     line-height: 2rem
+;
+display: flex;
+padding: 30px  5px;
   }
   
   .footer-bottom {
